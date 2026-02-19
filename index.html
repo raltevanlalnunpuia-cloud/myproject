@@ -1,126 +1,1793 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMRUT 2.0 Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-          },
-        },
-      }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .highlight {
-            background-color: #fde047;
-            color: #000;
-            padding: 2px 1px;
-            border-radius: 2px;
-            font-weight: 700;
-        }
-        .dark .highlight {
-            background-color: #ca8a04;
-            color: #fff;
-        }
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 10px;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #475569;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-        /* Recharts Visibility Fixes */
-        .recharts-legend-item-text {
-          color: #475569 !important; /* Slate 600 */
-          transition: color 0.3s;
-        }
-        .dark .recharts-legend-item-text {
-          color: #f8fafc !important; /* Slate 50 */
-        }
-        .recharts-cartesian-axis-tick-value {
-          fill: #64748b !important;
-        }
-        .dark .recharts-cartesian-axis-tick-value {
-          fill: #94a3b8 !important;
-        }
-        /* Refined Pie Chart Labels */
-        .recharts-pie-label-text {
-          fill: #64748b !important; /* Slate 500 default for light */
-          font-weight: 800;
-          font-size: 11px;
-          transition: fill 0.2s ease, font-size 0.2s ease;
-        }
-        .dark .recharts-pie-label-text {
-          fill: #94a3b8 !important; /* Slate 400 default for dark */
-        }
-        /* Hover effect: Change to white on hover */
-        .recharts-layer:hover .recharts-pie-label-text {
-          fill: #ffffff !important;
-          font-size: 13px;
-          text-shadow: 0px 1px 4px rgba(0,0,0,0.8);
-        }
-        /* Tooltip text visibility */
-        .recharts-tooltip-item-name, .recharts-tooltip-item-value {
-          color: #ffffff !important;
-          font-weight: 700 !important;
-        }
-        /* Ensure Legend Text is white in dark mode */
-        .dark .recharts-legend-item-text {
-          color: #ffffff !important;
-        }
-        /* Fade animation */
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.4s ease-out forwards;
-        }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-    "recharts": "https://esm.sh/recharts@^3.7.0",
-    "xlsx": "https://esm.sh/xlsx@^0.18.5",
-    "jspdf": "https://esm.sh/jspdf@^4.1.0",
-    "jspdf-autotable": "https://esm.sh/jspdf-autotable@^5.0.7",
-    "papaparse": "https://esm.sh/papaparse@^5.5.3"
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+#table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#table td, #table th {
+  border: 1px solid #ddd;
+  white-space:nowrap;
+  padding: 8px;
+}
+
+#table tr:nth-child(even){background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: justify;
+  background-color: #04AA6D;
+  color: white;
+}
+<!--Dropdown SECTION-->
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #3e8e41;
+}
+
+#myInput {
+  box-sizing: border-box;
+  background-image: url('searchicon.png');
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+#myInput:focus {outline: 3px solid #ddd;}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  overflow: auto;
+  border: 1px solid #5c6b5f ;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #5c6b5f ;}
+
+<!--.show {display: block;}-->
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+<!--End Dropdown SECTION-->
+</style>
+</head>
+<body style="background-color:white;">
+
+<h2 style="text-align:center;color:RED;"><STRONG>THLAHTU BUL CHHUINA</STRONG></h2>
+<div class="dropdown">
+    <button class="dropbtn"><h4> ZAWNAWLNA </h2></button>
+  <div class="dropdown-content">
+      <a href="#Zawnawlna"></a>
+    <a href="#Ralhnaia">Ralhnaia Fate</a>
+    <a href="#Sapchhawna">Sapchhawna (L) Thlahte</a>
+    <a href="#Zahliri">Zahliri (L) Thlahte</a>
+	<a href="#R.Romawia">R.Romawia Thlahte</a>
+    <a href="#Lalsiama">Lalsiama Thlahte</a>
+    <a href="#R.Lalhmangaiha">R.Lalhmangaiha Thlahte</a>
+    <a href="#R.Lalkhuma">R.Lalkhuma Thlahte</a>
+	<a href="#R.Lalchhandama">R.Lalchhandama Thlahte</a>
+    <a href="#Vanlalhruaia">Vanlalhruaia (L) Thlahte</a>
+    <a href="#Lalduhawmi">Lalduhawmi Thlahte</a>
+    <a href="#Vanlalzawma">Vanlalzawma Thlahte</a>
+	<a href="#Lalngaihawma">Lalngaihawma Colney Thlahte</a>
+    <a href="#VLSawma">VL Sawma Thlahte</a>
+    <a href="#Vanlalbeiseia">Vanlalbeiseia Ralte Thlahte</a>
+  </div>
+</div>
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
-</head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-    <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+		<h2 id="Zawnawlna"> <p style="text-align:center; color:RED;"> SUAKTHANGVUNGA RALTE KAWLNI THLAHTE </p></h2>
+<p style="text-align:justify;">
+      <strong>PU SUAKTHANGVUNGA (L)</strong> hian nupui hmasa (hming hriat loh) leh nupui hnuhnung (Pi Thangi) te nei in, a nupui hmasa nen hian KAWLPELVUNGA (L) LEH PAHLIRA (L) te an nei a ni. Tin, a nupui hnuhnung zawk Pi THANGI nen hian fa pathum PACHHUNGA, NUCHHUNGI LEH LIANZINGI te an nei bawk a ni. 
+
+  
+<div style="overflow:scroll;">
+<table id="table">
+  <tr>
+    <th>Kawlpelvunga(L) leh Hauthangpuii (L) Fate</th>
+    <th>Pahlira(L) leh Vailiani (L) Fate</th>
+	<th>Pachhunga(L) leh Sapremi (L) Fate</th>
+	<th>Nuchhungi(L) Fate</th>
+	<th>Lianzingi(L) Fate</th>
+  </tr>
+  <tr>
+    <td>1. Ralhnaia (L) (H/o Raltawni(L)) , Mamit</td>   
+    <td>1. Lalbiakkimi (L), Durtlang</td>
+	<td>1. Thansiama (L)</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>2. Vanthawmliana(Pasena) (L) (H/o Lalchhawnlovi (L)), Dinthar I</td>   
+    <td>2. Kairuma (L), Durtlang</td>
+	<td>2. Thankhuma, Durtlang</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>3. Vanthangpuii (L) (W/o Zokaithanga), Saipum</td>   
+    <td>3. Rualkhumi, Durtlang</td>
+	<td>3. Thanliana, Durtlang</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>4. Lalliani (Naupan laiin a thi)</td>    
+    <td>4. Zakunga, Sihphir</td>
+	<td>4. Thanhawla (L), Durtlang</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>5. Vanlalnghaki (W/o Lianhnuna), Hortoki</td>   
+    <td>5. Rammawii (L), Chaltlang</td>
+	<td>5. Zirliana, Tuikual</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>6. Lallianthanga (Naupan laiin a thi)</td>   
+    <td></td>
+	<td>6. Zothansangi, Durtlang</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td>7. Siamkungi (Naupan laiin a thi)</td>  
+    <td></td>
+	<td>7. Thanchunga, Durtlang</td>
+	<td>N/A</td>
+	<td>N/A</td>
+  </tr>
+ </table>
+</div>
+<p style="text-align:justify;color:#000000;">
+Pu SUAKTHANGVUNGA unaupa fapa Pu TESINA H/o THIANGI te hian fa pali an nei bawk a ni.<br>
+<br><strong>PU TESINA LEH PI THIANGI FATE:</strong><br>
+1. Ralthuami (L), Muallungthu hian fapa pali a nei:<br>
+&ensp;&ensp;&ensp;&ensp;a) Vanlalruata<br>
+&ensp;&ensp;&ensp;&ensp;b) Zakamlova<br>
+&ensp;&ensp;&ensp;&ensp;c) Boral tawh.<br>
+&ensp;&ensp;&ensp;&ensp;d) Zoramthanga<br>
+2. Dohleia (L), Bawngthah.<br>
+3. Hrangkhuma (L), Darlung.<br>
+&ensp;&ensp;&ensp;&ensp;a) Malsawmi, Sateek<br>
+4. Hrangdawla (L), Muallungthu.</p>
+<p>Go back to
+    <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+ <!--END SUAKTHANGVUNGA SECTION-->	 
+ <!-- RALHNAIA SECTION-->	
+   <h2 id="Ralhnaia"> <p style="text-align:center;color:RED;">RALHNAIA (L) FATE:</P></h2><p style="text-align:center;color:green;"> <strong>(An hming ah lut in an thlalak a en theih)</strong></p>
+<p style="text-align:justify;">
+      Pu Ralhnaia (L) hian Pi Chalzawni (L) leh Pi Raltawni (L) (D/o Lalawma (Awmhathaa)) te nupui ah neiin Fa Sawmpathum (Fapa Sawmpakhat leh Fanu Pahnih) an nei a ni. Pu Ralhnaia (L) hi kum 1914 ah a lo pianga,Mamit Bazar veng ah Kum 2007 khan kum 93 mi niin a boral a ni. Pi Raltawni (L) hi kum 1921 ah a lo pianga, 28.07.2022 dar 2:30 PM khan kum 102 mi niin a boral bawk a ni.
+    </p>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Sapchhawna (L)</td>
+    <td>Ralhnaia(L) leh Chalzawni (L)</td>
+    <td>Lalthianghlimi</td>
+	<td>Chawlhhmun, Aizawl</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+      <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1JUl4eLrKM0phAczP0a5AEVigDKpDD10I/view?usp=drive_link" target="_blank">2. Zahliri (L)</a></td>
+    <td>Ralhnaia(L) leh Chalzawni (L)</td>
+    <td>C. Lalchungnunga (L)</td>
+	<td>Dinthar I, Aizawl</td>
+	<td>9862561294</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1d8SXfR5yD8AN4pXXf7adgjJAD4uixxdD/view?usp=drive_link" target="_blank">3. R. Romawia</a></td>
+    <td>Ralhnaia(L) leh Chalzawni (L)</td>
+    <td>Lalengzami (L)</td>
+	<td>Rimawi Veng, Bairabi North</td>
+	<td>9612206600</td>
+  </tr>
+  <tr>
+    <td>4. Lalsiama</td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Nuchhungi</td>
+	<td>Mamit</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1OBnLNzZwaeAzQUEb6FAPqSqeZJew9EkM/view?usp=drive_link" target="_blank">5. R.Lalhmangaiha</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>K.Thanthiangi</td>
+	<td>Bazar veng, Mamit</td>
+	<td>9612695195</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/161dN1tnm0rrMCIY3hrKcAQo8H6Sb9yN1/view?usp=drive_link" target="_blank">6. R.Lalkhuma (L)</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>F.Chhungliani</td>
+	<td>Mamit</td>
+	<td>8974764029</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1WyYiCLyzzW0GKoW1v-664Bl5zACnUBha/view?usp=drive_link" target="_blank">7. R.Lalchhandama</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Zairemmawii</td>
+	<td>Mamit</td>
+	<td>9612733572</td>
+  </tr>
+  <tr>
+      <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1CoeWC_527QxRM9vFkVfyYMhNk6WKoyeK/view?usp=drive_link" target="_blank">8. Vanlalhruaia (L)</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>N/A</td>
+	<td>Mamit</td>
+	<td>N/A</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1oRjmJtLViceXcBeBS3FS3TVHsytCz1IL/view?usp=drive_link" target="_blank">9. Lalduhawmi</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Vanlalhnema (L), Dinthar, Aizawl</td>
+	<td>Dinthar</td>
+	<td>9774069410</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1v69vInVKgqLD8W1wOuP5zD8UqzWPPmt7/view?usp=drive_link" target="_blank">10. Vanlalzawma (L)</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Zonunsangi (L), Bairabi</td>
+	<td>Ramthar veng, Bairabi</td>
+	<td>8974419519</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/1O-KFn6xRLPkdtK-v3ALZtquBNKuTzV_H/view?usp=drive_link" target="_blank">11. Lalngaihawma Colney </a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Lalropuii</td>
+	<td>Aibawk</td>
+	<td>9856523366</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/18YicvlCthFyd8LhCG4ApzPaDhSTyl96c/view?usp=drive_link" target="_blank">12. VL Sawmzuala</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Lalremsangi</td>
+	<td>Bazar Veng, Mamit</td>
+	<td>9612100461</td>
+  </tr>
+  <tr>
+    <td><a style="text-decoration:none;" href="https://drive.google.com/file/d/18Irz8TvLCB2ONwrO9Hp3k6bW6QhkV4E2/view?usp=drive_link" target="_blank">13. Vanlalbeiseia Ralte</a></td>
+    <td>Ralhnaia(L) leh Raltawni (L)</td>
+    <td>Lalchhuanawmi, Bairabi</td>
+	<td>Bazar Veng, Mamit</td>
+	<td>9862753450</td>
+  </tr>
+  </table>
+  </div>
+    <!--<div><p style="background-image: url('https://drive.google.com/file/d/1Fy4hxkOKmBAjA3XHqdX_cxyyUpp3RkGW/view?usp=drive_link');"></p></div>-->
+  <p style="text-align:justify;color:#000000;">
+<strong>PU RALHNAIA (L) UNAU FATE:</strong><br>
+<br><strong>1. PU Vanthawmliana(Pasena) (L) (H/o Lalchhawnlovi (L)) fate:</strong><br>
+&ensp;&ensp;&ensp;&ensp;a) Rohnuna<br>
+&ensp;&ensp;&ensp;&ensp;b) Kawlthangpuia (L)<br>
+&ensp;&ensp;&ensp;&ensp;c) Zahmingthangi<br>
+&ensp;&ensp;&ensp;&ensp;d) Lalrinthanga, Bairabi North<br>
+&ensp;&ensp;&ensp;&ensp;e) Lalthlamuani <br>
+&ensp;&ensp;&ensp;&ensp;f) Hmachhuani<br>
+&ensp;&ensp;&ensp;&ensp;g) Malsawmi<br>
+&ensp;&ensp;&ensp;&ensp;h) Zara (L)<br>
+&ensp;&ensp;&ensp;&ensp;i) Lalnunmawia<br>
+&ensp;&ensp;&ensp;&ensp;j) Biakzuali<br>
+&ensp;&ensp;&ensp;&ensp;h) Rintluangi<br>
+&ensp;&ensp;&ensp;&ensp;i) Lalbuatsaiha<br>
+<strong>PU Vanthawmliana(Pasena) (L) leh hming hriat loh fate:</strong><br>
+&ensp;&ensp;&ensp;&ensp;a) Parmawii (Tleirawl laiin a boral).<br>
+&ensp;&ensp;&ensp;&ensp;b) Upa Lalrema, Phaisen<br><br>
+<strong>2. Pi Vanthangpuii (L) (W/o Zokaithanga fate):</strong><br>
+&ensp;&ensp;&ensp;&ensp;a) Lallianchhunga<br>
+&ensp;&ensp;&ensp;&ensp;b) Lalzuala<br>
+&ensp;&ensp;&ensp;&ensp;c) Engmawii<br><br>
+<strong>3. Pi Vanlalnghaki (W/o Lianhmuna) fate:</strong><br>
+&ensp;&ensp;&ensp;&ensp;a) Rohmingthanga<br>
+&ensp;&ensp;&ensp;&ensp;b) Remthanga<br>
+&ensp;&ensp;&ensp;&ensp;c) Engmawii<br>
+&ensp;&ensp;&ensp;&ensp;d) Tanpuia<br>
+&ensp;&ensp;&ensp;&ensp;e) Rosiami<br>
+&ensp;&ensp;&ensp;&ensp;f) Rindiki<br>
+</p>
+   
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p><br><br>
+<!--END RALHNAIA SECTION-->
+<!-- SAPCHHAWNA SECTION-->	
+   <h2 id="Sapchhawna"><p style="text-align:center;color:RED;">1. SAPCHHAWNA (L) THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Sapchawna (L) H/o Lalthianghlimi hi 
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / SAPCHHAWNA (L)  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. R. Lalhlimpuii</td>
+      <td></td>
+    <td>Lalhlira (L)</td>
+	<td>Chawlhhmun</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>2. Liansawta (L)</td>
+      <td></td>
+    <td>Lalngaihzuali</td>
+	<td>Chawlhhmun</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>3. Sangkhuma (L)</td>
+      <td></td>
+    <td>Parkhumi</td>
+	<td>Ainawn Veng, Aizawl</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>4. Zohmingliani (Zotei)</td>
+      <td></td>
+    <td>Vanlalruata</td>
+	<td>Chawlhhmun</td>
+	<td>9862236999</td>
+  </tr>
+  <tr>
+    <td>5. Zoherliana (L)</td>
+      <td></td>
+    <td>Siamtluangi</td>
+	<td>Chawlhhmun</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>6. R. Lalzarliana </td>
+      <td></td>
+    <td>Zoramchhani</td>
+	<td>Chawlhhmun</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>7. Lalduhsaki</td>
+      <td></td>
+    <td></td>
+	<td>Chawlhhmun</td>
+	<td></td>
+  </tr>
+  </table>
+  </div>
+  <h4 style="text-align:center;"> SECOND GENERATION / SAPCHHAWNA (L) TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalhmingliana</td>
+      <td></td>
+    <td>R. Lalhlimpuii leh Lalhlira (L)</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>2. Pza</td>
+      <td></td>
+    <td>R. Lalhlimpuii leh Lalhlira (L)</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>3. Victor Malsawmtluanga</td>
+      <td></td>
+    <td>R. Lalhlimpuii leh Lalhlira (L)</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>4. Malsawmtluangi</td>
+       <td></td>
+    <td>Liansawta (L) leh Lalngaihzuali</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>5. Lalrinawmi</td>
+       <td></td>
+    <td>Liansawta (L) leh Lalngaihzuali</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>6. Immanuela</td>
+       <td></td>
+    <td>Liansawta (L) leh Lalngaihzuali</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>7. Lalbiakhluni</td>
+       <td></td>
+    <td>Sangkhuma (L) leh Parkhumi</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>8. Lalhmangaihzuali (L)</td>
+       <td></td>
+    <td>Zohmingliani leh Vanlalruata</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>9. Melody Lalchhanhimi</td>
+       <td></td>
+    <td>Zoherliana (L) leh Siamtluangi</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>10. R.Lalnuntluanga</td>
+       <td></td>
+    <td>R. Lalzirliana leh Zoramchhani</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>11. Lalmuankima</td>
+       <td></td>
+    <td>R. Lalzirliana leh Zoramchhani</td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+    </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END SAPCHHAWNA SECTION-->
+<!-- ZAHLIRI SECTION-->	
+   <h2 id="Zahliri"><p style="text-align:center;color:RED;">2. ZAHLIRI (L) THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Zahliri hi kum 1936 ah Sateek khua ah a lo piang a, Kum 1948 ah Hortoki khua ah pem in, kum 1951 ah Vawngawn Phai (Phunchawng) ah an pem leh a ni. Vawngawn Phai a an awm lai hian a kawppui Pu C. Lalchungnunga (L) nen kum 1953 October thla ah an innei a ni. Ni 28.10.2023 tlai lam dar 4:30 khan Heart Attack avangin min lo boralsan ta a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / ZAHLIRI (L)  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. C. Lalhuzauva (L)</td>
+      <td></td>
+    <td>Darneihkhawli</td>
+	<td>Vaivakawn, Aizawl</td>
+	<td>9774016352</td>
+  </tr>
+  <tr>
+    <td>2. C. Lalbiakthanga</td>
+      <td></td>
+    <td>Lalrammawii</td>
+	<td>Dinthar I, Aizawl</td>
+	<td>9612121822</td>
+  </tr>
+  <tr>
+    <td>3. C. Lalremsiama</td>
+      <td></td>
+    <td>Lalrengpuii Sailo</td>
+	<td>Chawnpui, Aizawl</td>
+	<td>9436141086</td>
+  </tr>
+  <tr>
+    <td>4. C. Lalsangliana</td>
+      <td></td>
+    <td>Rothanpuii Sailo</td>
+	<td>Dinthar I, Aizawl</td>
+	<td>9436195389</td>
+  </tr>
+  <tr>
+    <td>5. C.Lalhlimpuii</td>
+      <td></td>
+    <td>J.Lalawmpuia</td>
+	<td>Ramthar, Aizawl</td>
+	<td>9436152435</td>
+  </tr>
+  </table>
+  </div>
+  <h4 style="text-align:center;"> SECOND GENERATION / ZAHLIRI (L) TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END ZAHLIRI SECTION-->
+    <!-- R.ROMAWIA SECTION-->	
+   <h2 id="R.Romawia"><p style="text-align:center;color:RED;">3. R.ROMAWIA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      R.Romawia H/O Lalengzami (L) hi
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / R.ROMAWIA  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+    </table>
+  </div>
+ <!-- <h4 style="text-align:center;"> SECOND GENERATION / R.ROMAWIA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+<th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>-->
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END R.ROMAWIA  SECTION-->
+    <!-- LALSIAMA SECTION-->	
+   <h2 id="Lalsiama"><p style="text-align:center;color:RED;">4. LALSIAMA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Lalsiama H/O Nuchhungi hi ?
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / LALSIAMA  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   </table>
+  </div>
+ <!-- <h4 style="text-align:center;"> SECOND GENERATION / LALSIAMA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+<th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>-->
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END LALSIAMA SECTION-->
+    <!-- R.LALHMANGAIHA SECTION-->	
+   <h2 id="R.Lalhmangaiha"><p style="text-align:center;color:RED;">5. R.LALHMANGAIHA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+     R.Lalhmangaiha H/O K.Thanthiangi hi?
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / R.LALHMANGAIHA  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+      <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+   </table>
+  </div>
+ <!-- <h4 style="text-align:center;"> SECOND GENERATION / R.LALHMANGAIHA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+<th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>-->
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END R.LALHMANGAIHA SECTION-->
+    <!-- R.LALKHUMA SECTION-->	
+   <h2 id="R.Lalkhuma"><p style="text-align:center;color:RED;">6.  R.LALKHUMA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      R.Lalkhuma H/O F. Chhungliani hi Ralhnaia (L) leh Raltawni (L) te fa niin, unau sawm leh pathum zinga a parukna ni turin Dt. 20.10.1950 khan Hortoki khuaah a lo piang a. Kum 1970 ah Mamit khuaah pemin an in bengbel ta a ni. R.Lalkhuma hi Mistiri hna thawk țhin niin lo neiin ei a zawng țhin bawk a. Kum 1999 thleng lo neia eizawngin kum 2000 ațangin serthum huan siamin a hun a hmang chhova. Kum 2019-a rialin a serthlum a den hlum vek takah chuan kuhva huan a siam leh a ni. Ni 19.1.2025 (Pathianni) tlai khan a chaw ei kham chu kuhvate eiin thutthleng seiah a țhu a. A kuhva ei chu a rui nasa hle a. Rei vak lo ah a țawng te a rawn fiah lo a. Mamit District Hospital pan pui niin ZMC lamah refer a ni a. A zan azanin ambulance hmangin chhohpui a ni a. Test chi hrang hrang, CT Scan, X ray, Thisen, Ultrasound leh MRI te tih niin a lu dinglam tukkhum hnaiah a vein chat hmuh chhuah niin a natna hi stroke a ni tih hmuh chhuah a ni a. Treatment te lain Ni 1.2.2025 ah ZMC atangin Mamit lamah haw thlak pui lehin in lamah enkawl chhunzawm a ni ta a. Țhat lam a pan zel a. A țawng te pawh țawng theiin țhut te pawh a țhu thei a. Țhat lam a pan chho zela kan hriat laiin  Ni 22.8.2025 khan a kaih leh a. Mamit District Hospital ah enkawl leh niin chuta țang chuan țhat lam pan tawh lovin a hniam chho hret hret a. Kum 2025 chhung khan damdawiinah pawh vawi 6 lai a lut a ni.
+ 
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION /  R.LALKHUMA  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>MS Dawngliana (L)</td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>Lalvulluaia Ralte</td>
+      <td></td>
+    <td>C. Lalnunfeli</td>
+	<td>Bazar Veng, Mamit</td>
+	<td>9863773111</td>
+  </tr>
+  <tr>
+    <td>Zoramhmangaihzuali </td>
+      <td></td>
+    <td>Lalawmpuia</td>
+	<td>Vengthar, Mamit</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>Ramthianghlimi </td>
+      <td></td>
+    <td>Lalțanpuia</td>
+	<td>Bazar Veng, Mamit</td>
+	<td></td>
+  </tr>
+    <tr>
+    <td>Lalropuii  </td>
+      <td></td>
+    <td>Lalvuana</td>
+	<td>Field Veng, Mamit</td>
+	<td></td>
+  </tr>
+   </table>
+  </div>
+ <!-- <h4 style="text-align:center;"> SECOND GENERATION /  R.LALKHUMA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+<th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>-->
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END R.LALKHUMA SECTION-->
+<!-- R.LALCHHANDAMA SECTION-->	
+   <h2 id="R.Lalchhandama"><p style="text-align:center;color:RED;">7. R.LALCHHANDAMA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      R. Lalchhandama H/o Zairemmawii hi kum 1952 December 26 ah piangin kum 1984 ah Zairemmawii nen Isua Krista Kohhran ah an innei a ni. He mi kum atang hian kohhran Upa ni in kum 2003 ah Assembly Upa ni tur a nem ngheh a ni. Tun ah hian atu leh fate nen Mamit High School veng ah an cheng mek a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / R.LALCHHANDAMA FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+        <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalramnghahmawia </td>
+      <td></td>
+    <td></td>
+	<td>Mamit High school Veng</td>
+	<td>8118960181</td>
+  </tr>
+  <tr>
+    <td>2. Malsawmtluangi </td>
+      <td></td>
+    <td></td>
+	<td>Mamit High school Veng</td>
+	<td>9612028963</td>
+  </tr>
+  <tr>
+    <td>3. Lallawmzuali</td>
+      <td></td>
+    <td>K. Lalrintluanga, Chawngte</td>
+	<td>Bethlehem Vengthlang Aizawl</td>
+	<td>9862382811</td>
+  </tr>
+  <tr>
+    <td>4. Lalbiakhlui  </td>
+      <td></td>
+    <td></td>
+	<td>Mamit High school Veng</td>
+	<td>8258090340</td>
+  </tr>
+  <tr>
+    <td>5. Lalramchanpuia  </td>
+      <td></td>
+    <td></td>
+	<td>Mamit High school Veng</td>
+	<td>8974116490</td>
+  </tr>
+   </table>
+  </div>
+ <h4 style="text-align:center;"> SECOND GENERATION / R.LALCHHANDAMA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+	<th>Address</th>
+	  </tr>
+  <tr>
+    <td>1. Vanlalmalsawma</td>
+      <td></td>
+    <td>Lalramnghahmawia </td>
+   	<td>Mamit High school Veng</td>
+	  </tr>
+  <tr>
+    <td>2.  Lalnunmawia</td>
+      <td></td>
+    <td>Lalramnghahmawia</td>
+   	<td>Mamit High school Veng</td>
+	  </tr>
+  <tr>
+    <td>3. Aida Lalruatpuii</td>
+      <td></td>
+    <td>Lalramnghahmawia</td>
+   	<td>Mamit High school Veng</td>
+	  </tr>  
+	  <tr>
+    <td>4. Hannah Lalhlimpuii</td>
+          <td></td>
+    <td>Lalramnghahmawia </td>
+   	<td>Mamit High school Veng</td>
+	  </tr>
+  <tr>
+    <td>5.  Angel Kalrinkimi</td>
+      <td></td>
+    <td>Lallawmzuali</td>
+	<td>Bethlehem Vengthlang Aizawl</td>
+	  </tr>
+  <tr>
+    <td>6. Sophia Lalhminghlui</td>
+      <td></td>
+    <td>Lalbiakhlui</td>
+	<td>Mamit High school Veng</td>
+	  </tr>  
+	  <tr>
+<tr>
+    <td>7. Raphael V.L.Runrempuia</td>
+    <td></td>
+    <td>Lalbiakhlui </td>
+	<td>Mamit High school Veng</td>
+	  </tr>
+  <tr>
+    <td>8.  Maisie Lalhriatzuali</td>
+      <td></td>
+    <td>Lalbiakhlui</td>
+	<td>Mamit High school Veng</td>
+	  </tr>
+   
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END R.LALCHHANDAMA SECTION-->
+    <!-- VANLALHRUAIA SECTION-->	
+   <h2 id="Vanlalhruaia"><p style="text-align:center;color:RED;">8. VANLALHRUAIA (L) THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Vanlalhruaia (L) H/O Vanlalliani hi January, 1955 ah a lo pianga, Lengpui ah khawsa in 25 December 2007 ah a boral a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / VANLALHRUAIA (L) FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+    <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Vanlalremkimi </td>
+      <td>12.09.1988</td>
+    <td>Lalthahluana</td>
+	<td>Lengpui</td>
+	<td>7642916959 / 9862561064</td>
+  </tr>
+  <tr>
+    <td>2. Vulmawii </td>
+      <td>18.11.1990</td>
+    <td>Lalthlanawna</td>
+	<td>Lengpui</td>
+	<td>8413031715</td>
+  </tr>
+  <tr>
+    <td>3. Vanlalramhmangaihzuala</td>
+      <td>22.03.1993</td>
+    <td>Christina</td>
+	<td>Mamit</td>
+	<td>9362934341</td>
+  </tr>
+  
+   </table>
+  </div>
+ <h4 style="text-align:center;"> SECOND GENERATION / VANLALHRUAIA (L)  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+	<th>Pasal/Nupui Hming</th>
+    <th>Address</th>
+	  </tr>
+  <tr>
+    <td>1. Vanlalmawia</td>
+      <td></td>
+    <td>Vanlalremkimi leh Lalthahluana </td>
+   	<td></td>
+	<td>Lengpui</td>
+	  </tr>
+  <tr>
+    <td>2.  Lalthafamkimi</td>
+      <td></td>
+    <td>Vanlalremkimi leh Lalthahluana </td>
+   	<td></td>
+	<td>Lengpui</td>
+	  </tr>
+  <tr>
+    <td>3. Lalhruaitluanga</td>
+      <td></td>
+    <td>Vanlalremkimi leh Lalthahluana </td>
+   	<td></td>
+	<td>Lengpui</td>
+	  </tr>  
+	  <tr>
+    <td>4. Reuben Rosangzuala</td>
+          <td></td>
+    <td>Vulmawii leh Lalrohlua </td>
+   	<td></td>
+	<td>Lengpui</td>
+	  </tr>
+  <tr>
+    <td>5.  Lalchuankima</td>
+      <td></td>
+    <td>Vanlalramhmangaihzuala leh Christina</td>
+   	<td></td>
+	<td>Mamit</td>
+	  </tr>
+  <tr>
+    <td>6. Lalhruaizela</td>
+      <td></td>
+    <td>Vanlalramhmangaihzuala leh Christina</td>
+   	<td></td>
+	<td>Mamit</td>
+	  </tr>  
+	  <tr>
+<tr>
+    <td>7. Lalthazuala</td>
+    <td></td>
+    <td>Vanlalramhmangaihzuala leh Christina</td>
+   	<td></td>
+	<td>Mamit</td>
+	  </tr>
+    
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END VALALHRUAIA SECTION-->
+<!-- LALDUHAWMI SECTION-->	
+   <h2 id="Lalduhawmi"><p style="text-align:center;color:RED;">9. LALDUHAWMI THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Lalduhawmi W/o Vanlalhnema (L) hi 20 November 1956 ah a lo pianga, Aizawl Civil Hospital ah a service chhung hna a thawk a, Dinthar, Aizawl ah an khawsa a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / LALDUHAWMI FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+        <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalramchullova </td>
+      <td></td>
+    <td></td>
+	<td>Thenzawl</td>
+	<td>9863617702</td>
+  </tr>
+  <tr>
+    <td>2. K. Lalrawngbawli </td>
+      <td></td>
+    <td>Lalchhanhima, Aizawl Venglai</td>
+	<td>Aizawl Venglai</td>
+	<td>9862790407</td>
+  </tr>
+  <tr>
+    <td>3. K. Lalramdinthara</td>
+      <td></td>
+    <td></td>
+	<td>Dinthar</td>
+	<td>97740 69410</td>
+  </tr>
+  <tr>
+    <td>4. Esther Lalramsangi  </td>
+      <td></td>
+    <td>Lalramdinpuia Hrahsel, Electric Veng, Lunglei</td>
+	<td>Electric Veng, Lunglei</td>
+	<td>9612522521</td>
+  </tr>
+   </table>
+  </div>
+ <h4 style="text-align:center;"> SECOND GENERATION / LALDUHAWMI  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+	<th>Pasal/Nupui Hming</th>
+    <th>Address</th>
+	  </tr>
+  <tr>
+    <td>1. Christina lalramngaihzuali</td>
+      <td></td>
+    <td>Lalramchullova </td>
+   	<td>Lalbiakzuala, Sailutar</td>
+	<td>Sailutar</td>
+	  </tr>
+  <tr>
+    <td>2.  Catherine Remruatpuii</td>
+      <td></td>
+    <td>Lalramchullova</td>
+   	<td></td>
+	<td>Mamit/Khawzawl</td>
+	  </tr>
+  <tr>
+    <td>3. Francis Lalremmawia (L)</td>
+      <td></td>
+    <td>Lalramchullova</td>
+    <td></td>
+	<td>Thenzawl</td>
+	  </tr>  
+	  <tr>
+    <td>4. Lalhlimpuii</td>
+          <td></td>
+    <td>K. Lalrawngbawli </td>
+   	<td></td>
+	<td>Aizawl Venglai</td>
+	  </tr>
+  <tr>
+    <td>5.  Vanlallawmpuii</td>
+      <td></td>
+    <td>K. Lalrawngbawli</td>
+   	<td></td>
+	<td>Aizawl Venglai</td>
+	  </tr>
+  <tr>
+    <td>6. Lalrammuanpuia</td>
+      <td></td>
+    <td>K. Lalrawngbawli</td>
+    <td></td>
+	<td>Aizawl Venglai</td>
+	  </tr>  
+	  <tr>
+<tr>
+    <td>7. K Vanlalrohlui</td>
+    <td></td>
+    <td>K. Lalramdinthara </td>
+   	<td></td>
+	<td>Dinthar</td>
+	  </tr>
+  <tr>
+    <td>8.  K. Lalramdintluanga</td>
+      <td></td>
+    <td>K. Lalramdinthara</td>
+   	<td></td>
+	<td>Dinthar</td>
+	  </tr>
+  <tr>
+    <td>9. Margaret Lalmalsawmi</td>
+      <td></td>
+    <td>K. Lalramdinthara</td>
+    <td></td>
+	<td>Dinthar</td>
+	  </tr>  
+        <tr>
+    <td>10. L. Rinawmi Hrahsel</td>
+        <td></td>
+    <td>Esther Lalramsangi w/o Lalramdinpuia Hrahsel </td>
+   	<td></td>
+	<td>Electric Veng, Lunglei</td>
+	  </tr>
+  <tr>
+    <td>11.  L. Rindika Hrahsel</td>
+      <td></td>
+    <td>Esther Lalramsangi w/o Lalramdinpuia Hrahsel</td>
+   	<td></td>
+	<td>Electric Veng, Lunglei</td>
+	  </tr>
+    
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END LALDUHAWMI SECTION-->
+<!-- VANLALZAWMA SECTION-->	
+   <h2 id="Vanlalzawma"><p style="text-align:center;color:RED;">10. VANLALZAWMA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Vanlalzawma hi 31.10.1959 ah a lo pianga. Zonunsangi (L) (D/o Raldothanga (L) leh Darthantluangi (L)) nen innei in Sawrkar sikul ah a service (HeadMaster) chhung Bairabi ah hian a thawk a, Ramthar Veng Bairabi ah a in bengbel a ni. A nupui Zonunsangi (L) hian 20.January.2023 khan Cancer natna avangin chatuan ram min pansan ta a ni. Tin, Vanlalzawma (L) hian a nupui boral kum vek 30.11.2023 khan nat lawkna awm lovin zing lam a chaw eikham a mu zal mai mai chu a tu ten chhun thhingpui in tur a kaihthawh an tum a, kaithawh tur awm lovin chatuan ram min pan san ta a ni. 
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / VANLALZAWMA FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalhriatpuia</td>
+      <td>1987</td>
+    <td>Steicy Lalchhandami Pachuau, Tuikual</td>
+	<td>Mission veng, Bairabi</td>
+	<td>8731068566</td>
+  </tr>
+  <tr>
+    <td>2. Baby Vanlalfeli</td>
+      <td>1988</td>
+    <td>Lallawmpuia, Lunglei</td>
+	<td>North kawnpui</td>
+	<td>9366079591</td>
+  </tr>
+  <tr>
+    <td>3. Lalnunpuia (May-a)</td>
+      <td>01.05.1990</td>
+    <td>Vanlalmalsawmkimi, Muallungthu</td>
+	<td>Mual Veng, Durtlang</td>
+	<td>9612505363</td>
+  </tr>
+  <tr>
+    <td>4. Lalrammuanpuii</td>
+    <td>1992</td>
+	<td>Ramthar Veng, Bairabi</td>
+	<td>8413059697</td>
+  </tr>
+ </table>
+  </div>
+  <h4 style="text-align:center;"> SECOND GENERATION / VANLALZAWMA  TUTE: </h4>
+<div style="overflow:scroll;">
+
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+   	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Clement Laltlanhlua</td>
+      <td>2011</td>
+    <td>Lalhriatpuia leh Steicy Lalchhandami Pachuau</td>
+    <td>Mission veng, Bairabi</td>
+	<td>9233048275</td>
+  </tr>
+  <tr>
+    <td>2. Miguel Vanlalchhanchhuaha</td>
+      <td>12.12.2012</td>
+    <td>Lalhriatpuia leh Steicy Lalchhandami Pachuau</td>
+    <td>Mission veng, Bairabi</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>3. Martius Vanlalmalsawmkima Rengsi</td>
+      <td></td>
+    <td>Lalhriatpuia leh Steicy Lalchhandami Pachuau</td>
+    <td>Mission veng, Bairabi</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>4. Eleana Vanlalpekhlui Rengsi</td>
+      <td></td>
+    <td>Lalhriatpuia leh Steicy Lalchhandami Pachuau</td>
+    <td>Mission veng, Bairabi</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>5. Jonathan Laldampuia</td>
+      <td>17.01.2013</td>
+    <td>Baby Vanlalfeli leh Lallawmpuia</td>
+    <td>North Kawnpui</td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>6. Larry Vanlallawma</td>
+       <td></td>
+    <td>Baby Vanlalfeli leh Lallawmpuia</td>
+    <td>North Kawnpui</td>
+	<td></td>
+  </tr>
+   <tr>
+    <td>7. Grace Zosangpuii</td>
+       <td></td>
+    <td>Baby Vanlalfeli leh Lallawmpuia</td>
+    <td>North Kawnpui</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>8. Jeffrey R. Zothantluanga</td>
+      <td>15.01.2013</td>
+    <td>Lalnunpuia (May-a) leh Emmylou C.Zohlimpuii</td>
+  	<td>Ramthar veng, Bairabi</td>
+	<td>8798189320</td>
+  </tr>
+  <tr>
+    <td>9. Vivian R. Zonunpuii</td>
+      <td>02.05.2014</td>
+    <td>Lalnunpuia (May-a) leh Emmylou C.Zohlimpuii</td>
+  	<td>Ramthar veng, Bairabi</td>
+	<td>9362633653</td>
+  </tr>
+   <tr>
+    <td>10. Eugene R. Lalnunkima</td>
+       <td>24.10.2019</td>
+    <td>Lalnunpuia (May-a) leh Vanlalmalsawmkimi</td>
+ 	<td>Mual Veng, Durtlang</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>11. Agastin Malsawmpuia Ralte</td>
+      <td>03.05.2022</td>
+    <td>Lalnunpuia (May-a) leh Vanlalmalsawmkimi</td>
+	<td>Mual Veng, Durtlang</td>
+	<td></td>
+  </tr> 
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END VANLALZAWMA SECTION-->
+
+<!-- LALNGAIHAWMA COLNEY SECTION-->	
+   <h2 id="Lalngaihawma"><p style="text-align:center;color:RED;">11. LALNGAIHAWMA COLNEY THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Lalngaihawma Colney H/o Lalropuii hi 14 January 1961 ah a lo pianga, sawrkar sikul a thawk niin a eizawnna hmun Venghlun, Aibawk ah an chhungkua in an in bengbel a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / LALNGAIHAWMA COLNEY  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+        <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalmuanpuii (Mpi)</td>
+      <td></td>
+    <td></td>
+	<td>Venghlun, Aibawk</td>
+	<td>8575461922</td>
+  </tr>
+  <tr>
+    <td>2. Reuben Lalremruata (Tawnga)</td>
+      <td></td>
+    <td></td>
+	<td>Venghlun, Aibawk</td>
+	<td>8132811258</td>
+  </tr>
+  <tr>
+    <td>3. Lalnunpuia</td>
+      <td></td>
+    <td></td>
+	<td>Venghlun, Aibawk</td>
+	<td>8259946140</td>
+  </tr>
+  <tr>
+    <td>4. Lalruatdiki</td>
+      <td></td>
+    <td></td>
+	<td>Venghlun, Aibawk</td>
+	<td>8974177161</td>
+  </tr>
+   </table>
+  </div>
+ <!-- <h4 style="text-align:center;"> SECOND GENERATION / LALNGAIHAWMA COLNEY  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+<th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  <tr>
+    <td></td>
+<td></td>
+    <td></td>
+    <td></td>
+	<td></td>
+	<td></td>
+  </tr>
+  
+  
+  </table>
+  </div>-->
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END LALNGAIHAWMA COLNEY SECTION-->
+<!-- VL SAWMZUALA COLNEY SECTION-->	
+   <h2 id="VLSawma"><p style="text-align:center;color:RED;">12. V.L SAWMZUALA THLAHTE:</p></h2>
+<p style="text-align:justify;">
+     V.L Sawmzual H/O Lalremsangi hi 03 March 1964 ah a lo pianga, Mamit Bazar veng ah an chhungkua in an cheng a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION /  V.L SAWMZUALA  FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+        <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Lalramengvara</td>
+      <td></td>
+    <td>Laltleipuii, Armed Veng, Aizawl</td>
+	<td>Mamit Bazar Veng</td>
+	<td>8974215531</td>
+  </tr>
+  <tr>
+    <td>2. Lalthafamkimi</td>
+      <td></td>
+    <td>Malsawmdawngliana, Kawrthah Venglai</td>
+	<td>Kawrthah Venglai</td>
+	<td>7627968356</td>
+  </tr>
+  <tr>
+    <td>3. Lalnunfela</td>
+      <td></td>
+    <td></td>
+	<td>Bazar Veng, Mamit</td>
+	<td>9612615218</td>
+  </tr>
+  <tr>
+    <td>4. Jeny Lalrinmawii </td>
+      <td></td>
+    <td></td>
+	<td>Bazar Veng, Mamit</td>
+	<td>8974575041</td>
+  </tr>
+  <tr>
+    <td>4. Lalhmingsangi </td>
+      <td></td>
+    <td>Lalhruaizela, Bazar Veng, Mamit</td>
+	<td>Bazar Veng, Mamit</td>
+	<td>9612508656</td>
+  </tr>
+   </table>
+  </div>
+<h4 style="text-align:center;"> SECOND GENERATION /  V.L SAWMZUALA  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Zomuansanga</td>
+      <td></td>
+    <td>Lalramengvara leh Laltleipuii</td>
+    <td></td>
+	<td>Mamit Bazar Veng </td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>2. Malsawmhlui</td>
+      <td></td>
+    <td>Lalramengvara leh Laltleipuii</td>
+    <td></td>
+	<td>Mamit Bazar Veng </td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>3. Reuben Lalrinhlua </td>
+      <td></td>
+    <td>Lalthafamkimi leh Malsawmdawngliana</td>
+    <td></td>
+	<td>Kawrthah Venglai</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>4. Zodinsanga</td>
+      <td></td>
+    <td>Lalthafamkimi leh Malsawmdawngliana</td>
+    <td></td>
+	<td>Kawrthah Venglai</td>
+	<td></td>
+  </tr><tr>
+    <td>5. Lalrinsiami</td>
+        <td></td>
+    <td>Lalthafamkimi leh Malsawmdawngliana</td>
+    <td></td>
+	<td>Kawrthah Venglai</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>6. Lalrinpuia</td>
+      <td></td>
+    <td>Lalthafamkimi leh Malsawmdawngliana</td>
+    <td></td>
+	<td>Kawrthah Venglai</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>7. Jason Lalruatpuia</td>
+      <td></td>
+    <td>Lalhmingsangi leh Lalhruaizela</td>
+    <td></td>
+	<td>Mamit Bazar Veng</td>
+	<td></td>
+  </tr>
+  <tr>
+    <td>8. Isaac Lalmalsawma</td>
+      <td></td>
+    <td>Lalhmingsangi leh Lalhruaizela</td>
+    <td></td>
+	<td>Mamit Bazar Veng</td>
+	<td></td>
+  </tr>
+  
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END VL SAWMZUALA SECTION-->
+
+<!-- VANLALBEISEIA RALTE SECTION-->	
+   <h2 id="Vanlalbeiseia"><p style="text-align:center;color:RED;">13. VANLALBEISEIA RALTE THLAHTE:</p></h2>
+<p style="text-align:justify;">
+      Vanlalbeiseia Ralte H/o Lalchhuanawmi hi 27 May 1966 ah a lo pianga, sawrkar sikul a thawk niin a eizawnna hmun Mamit ah an chhungkua in an in bengbel a ni.
+    </p>
+	<h4 style="text-align:center;"> FIRST GENERATION / VANLALBEISEIA RALTE FATE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	<tr>
+    <th>Hming</th>
+        <th>Date of Birth</th>
+    <th>Pasal/Nupui Hming</th>
+	<th>Address</th>
+	<th>Phone Number</th>
+  </tr>
+  <tr>
+    <td>1. Vanlalfaktluangi</td>
+      <td></td>
+    <td></td>
+	<td>Bazar veng, Mamit</td>
+	<td>8415881881</td>
+  </tr>
+  <tr>
+    <td>2. Vanlalremruati (Mitei)</td>
+      <td></td>
+    <td>Abraham Lalzuiliana, Venglai, New Serchhip</td>
+	<td>Venglai, New Serchhip</td>
+	<td>8974981482</td>
+  </tr>
+  <tr>
+    <td>3. Vanlalnghaka</td>
+      <td></td>
+    <td>Vanlalrinchhani, Tuikual, Aizawl</td>
+	<td>Mamit</td>
+	<td>9366250241</td>
+  </tr>
+  <tr>
+    <td>4. Lalawmpuia </td>
+      <td></td>
+    <td>Agnes Vanlalruati, Mamit</td>
+	<td>Mamit</td>
+	<td>6009969230</td>
+  </tr>
+   </table>
+  </div>
+ <h4 style="text-align:center;"> SECOND GENERATION / VANLALBEISEIA RALTE  TUTE: </h4>
+<div style="overflow:scroll;">
+	<table id="table">
+	  <tr>
+    <th>Hming</th>
+          <th>Date of Birth</th>
+    <th>Nu leh Pa Hming</th>
+    <th>Address</th>
+	  </tr>
+  <tr>
+    <td>1. Lisa Lalremtluangi</td>
+      <td></td>
+    <td>Vanlalnghaka leh Vanlalrinchhani</td>
+   	<td>Mamit</td>
+	  </tr>
+  <tr>
+    <td>2.  Gabriel Colney</td>
+      <td></td>
+    <td>Vanlalnghaka leh Vanlalrinchhani</td>
+   	<td>Mamit</td>
+	  </tr>
+  <tr>
+    <td>3. Adrian Lalmalsawma</td>
+      <td></td>
+    <td>Lalawmpuia leh Agnes Vanlalruati</td>
+    <td>Mamit</td>
+	  </tr>  
+  </table>
+  </div>
+  <p>Go back to
+      <a href="#Zawnawlna">Zawnawlna</a>.
+    </p>
+<!--END VANLALBEISEIA RALTE SECTION-->
 </body>
 </html>
+
+
